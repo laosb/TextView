@@ -86,7 +86,9 @@ public struct TextView: View {
                 textAlignment,
                 range: NSRange(location: 0, length: textView.string.count)
             )
-            textView.font = font
+            if font != nil {
+                textView.font = font
+            }
             textView.textColor = textColor
             textView.backgroundColor = backgroundColor
             if (autocorrection == .yes) != textView.isAutomaticSpellingCorrectionEnabled {
