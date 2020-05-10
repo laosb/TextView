@@ -6,7 +6,8 @@ let package = Package(
 	name: "TextView",
 	platforms: [
 		.iOS(.v13),
-		.tvOS(.v13)
+		.tvOS(.v13),
+        .macOS(.v10_15)
 	],
 	products: [
 		.library(
