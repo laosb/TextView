@@ -99,8 +99,8 @@ public struct TextView: View {
             
             DispatchQueue.main.async {
                 _ = self.isEditing
-                    ? textView.becomeFirstResponder()
-                    : textView.resignFirstResponder()
+                    ? textView.window?.makeFirstResponder(textView)
+                    : textView.window?.becomeFirstResponder()
             }
         }
     }
