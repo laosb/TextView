@@ -135,7 +135,7 @@ public struct TextView: View {
         placeholderAlignment: Alignment = .topLeading,
         placeholderHorizontalPadding: CGFloat = 4.5,
         placeholderVerticalPadding: CGFloat = 7,
-        font: NSFont?,
+        font: NSFont? = nil,
         textColor: NSColor = .labelColor,
         placeholderColor: Color = .init(NSColor.placeholderTextColor),
         backgroundColor: NSColor = .clear,
