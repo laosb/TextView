@@ -76,10 +76,7 @@ public struct TextView: View {
         }
         
         public func makeNSView(context: Context) -> NSScrollView {
-            let textView = NSTextView(frame: CGRect(
-                x: 0, y: 0,
-                width: 0, height: CGFloat.greatestFiniteMagnitude
-            ))
+            let textView = NSTextView()
             let scrollView = NSScrollView()
             textView.delegate = context.coordinator
             textView.drawsBackground = false
