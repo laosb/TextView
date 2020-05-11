@@ -41,6 +41,7 @@ public struct TextView: View {
         private let autocorrection: Autocorrection
         private let isEditable: Bool
         private let isSelectable: Bool
+        private let isScrollingEnabled: Bool
         private let shouldWaitUntilCommit: Bool
         
         public init(
@@ -53,6 +54,7 @@ public struct TextView: View {
             autocorrection: Autocorrection,
             isEditable: Bool,
             isSelectable: Bool,
+            isScrollingEnabled: Bool,
             shouldWaitUntilCommit: Bool
         ) {
             _text = text
@@ -65,6 +67,7 @@ public struct TextView: View {
             self.autocorrection = autocorrection
             self.isEditable = isEditable
             self.isSelectable = isSelectable
+            self.isScrollingEnabled = isScrollingEnabled
             self.shouldWaitUntilCommit = shouldWaitUntilCommit
         }
         
@@ -72,13 +75,27 @@ public struct TextView: View {
             .init(self)
         }
         
-        public func makeNSView(context: Context) -> NSTextView {
-            let textView = NSTextView()
+        public func makeNSView(context: Context) -> NSScrollView {
+            let textView = NSTextView(frame: CGRect(
+                x: 0, y: 0,
+                width: 0, height: CGFloat.greatestFiniteMagnitude
+            ))
+            let scrollView = NSScrollView()
             textView.delegate = context.coordinator
-            return textView
+            textView.drawsBackground = false
+            textView.autoresizingMask = [.width]
+            textView.maxSize = NSSize(width: 0, height: CGFloat.greatestFiniteMagnitude)
+            textView.textContainer?.heightTracksTextView = false
+            textView.textContainer?.widthTracksTextView = true
+            scrollView.documentView = textView
+            scrollView.hasVerticalScroller = true
+            scrollView.drawsBackground = false
+            return scrollView
         }
         
-        public func updateNSView(_ textView: NSTextView, context _: Context) {
+        public func updateNSView(_ scrollView: NSScrollView, context _: Context) {
+            guard let textView = scrollView.documentView as? NSTextView else { return }
+            
             if !shouldWaitUntilCommit || !textView.hasMarkedText() {
                 textView.string = text
             }
@@ -96,6 +113,7 @@ public struct TextView: View {
             }
             textView.isEditable = isEditable
             textView.isSelectable = isSelectable
+            textView.textContainer?.heightTracksTextView = !isScrollingEnabled
             
             DispatchQueue.main.async {
                 _ = self.isEditing
@@ -127,6 +145,7 @@ public struct TextView: View {
     private let autocorrection: Autocorrection
     private let isEditable: Bool
     private let isSelectable: Bool
+    private let isScrollingEnabled: Bool
     private let shouldWaitUntilCommit: Bool
     
     public init(
@@ -142,11 +161,9 @@ public struct TextView: View {
         placeholderColor: Color = .init(NSColor.placeholderTextColor),
         backgroundColor: NSColor = .clear,
         autocorrection: Autocorrection = .default,
-        isSecure: Bool = false,
         isEditable: Bool = true,
         isSelectable: Bool = true,
         isScrollingEnabled: Bool = true,
-        isUserInteractionEnabled: Bool = true,
         shouldWaitUntilCommit: Bool = true
     ) {
         _text = text
@@ -164,6 +181,7 @@ public struct TextView: View {
         self.autocorrection = autocorrection
         self.isEditable = isEditable
         self.isSelectable = isSelectable
+        self.isScrollingEnabled = isScrollingEnabled
         self.shouldWaitUntilCommit = shouldWaitUntilCommit
     }
     
@@ -182,6 +200,7 @@ public struct TextView: View {
             autocorrection: autocorrection,
             isEditable: isEditable,
             isSelectable: isSelectable,
+            isScrollingEnabled: isScrollingEnabled,
             shouldWaitUntilCommit: shouldWaitUntilCommit
         )
     }
